@@ -37,13 +37,28 @@ mack_creek_lengths <- mack_creek_vertebrates %>%
   clean_names() %>% 
   select(year:sampledate) %>% 
   filter(section == "CC") %>% 
-  mutate(across(where(is.character, tolower))) %>% 
+  mutate(across(where(is.character), tolower)) %>% 
   drop_na(species) %>% 
   group_by(species) %>% 
   summarize(mean_length_cm = mean(length1, na.rm = TRUE),
             sd_length_cm = sd(length1, na.rm = TRUE)) %>% 
   ungroup()
 ```
+Reprex
+```{r}
+df_1 <- tribble(~Name, ~Height, ~Hair_color,
+              "Teddy", 2.2, "brown",
+              "Khora", 3.1, "white",
+              "Waffle", 1.0, "tan")
+
+df_lower <- df_1 %>% 
+  clean_names() %>% 
+  select(name:hair_color) %>% 
+  filter(name == "Teddy") %>% 
+  mutate(across(where(is.character), tolower))
+ 
+```
+
 
 ### reprex 2
 
@@ -51,14 +66,32 @@ Identify what is causing the problem in the code below (there's only one thing).
 
 ```{r}
 # Example 2:
-mack_creek_vertebrates %>% 
+creek_graph <- mack_creek_vertebrates %>% 
   clean_names() %>% 
-  filter(species == "ONCL") %>% 
-  ggplot(aes(x = length1, y = weight)) +
-         geom_point(aes(shape = 12), color = "purple") +
-         theme_minimal() +
-         labs(x = "Cutthroat trout length (cm)",
-              y = "Weight (g)")
+  filter(species == "ONCL")
+
+my_plot <- ggplot(data = creek_graph, aes(x = length1, y = weight)) +
+  geom_point(shape = 12, fill = "purple") +
+  theme_minimal() +
+  labs(x = "Cutthroat trout length (cm)",
+       y = "Weight (g)")
+
+my_plot
+```
+Reprex 2
+```{r}
+df <- tribble(~fish_id, ~length, ~weight,
+              "fish_1", 2.2, 5,
+              "fish_2", 3.1, 6,
+              "fish_2", 1.0, 7)
+
+my_plot <- ggplot(data = df, aes(x = length, y = weight)) +
+  geom_point(shape = 12, fill = "purple") +
+  theme_minimal() +
+  labs(x = "Cutthroat trout length (cm)",
+       y = "Weight (g)")
+
+my_plot
 ```
 
 ## End
